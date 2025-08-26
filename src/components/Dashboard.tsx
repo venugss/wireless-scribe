@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { NetworkCapture } from './NetworkCapture';
+import { DatasetUpload } from './DatasetUpload';
+import { AnalysisResults } from './AnalysisResults';
+import { ForensicReport } from './ForensicReport';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Activity, 
@@ -14,11 +18,9 @@ import {
   Wifi,
   Database,
   Settings,
-  LogOut
+  LogOut,
+  FileText
 } from 'lucide-react';
-import { NetworkCapture } from './NetworkCapture';
-import { DatasetUpload } from './DatasetUpload';
-import { AnalysisResults } from './AnalysisResults';
 
 interface DashboardProps {
   onLogout: () => void;
@@ -72,7 +74,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       {/* Main Content */}
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-muted">
+          <TabsList className="grid w-full grid-cols-5 bg-muted">
             <TabsTrigger value="overview" className="data-v-[state=active]:bg-primary">
               <Activity className="w-4 h-4 mr-2" />
               Overview
@@ -88,6 +90,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
             <TabsTrigger value="results">
               <AlertTriangle className="w-4 h-4 mr-2" />
               Results
+            </TabsTrigger>
+            <TabsTrigger value="report">
+              <FileText className="w-4 h-4 mr-2" />
+              Report
             </TabsTrigger>
           </TabsList>
 
@@ -191,6 +197,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
           <TabsContent value="results">
             <AnalysisResults />
+          </TabsContent>
+
+          <TabsContent value="report">
+            <ForensicReport />
           </TabsContent>
         </Tabs>
       </div>
