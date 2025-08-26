@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Square, Wifi, Activity, AlertTriangle } from 'lucide-react';
+import { Play, Square, Wifi, Activity, AlertTriangle, Download } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface NetworkCaptureProps {
   isCapturing: boolean;
@@ -29,6 +30,7 @@ export const NetworkCapture: React.FC<NetworkCaptureProps> = ({
     suspiciousPackets: 0,
     threats: 0
   });
+  const { toast } = useToast();
 
   // Simulate packet capture
   useEffect(() => {
@@ -67,6 +69,43 @@ export const NetworkCapture: React.FC<NetworkCaptureProps> = ({
     }
   };
 
+  const handleSaveCapture = () => {
+    if (packets.length === 0) {
+      toast({
+        title: "No data to save",
+        description: "Start capturing packets first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const captureData = {
+      timestamp: new Date().toISOString(),
+      totalPackets: stats.totalPackets,
+      suspiciousPackets: stats.suspiciousPackets,
+      threats: stats.threats,
+      packets: packets
+    };
+
+    const blob = new Blob([JSON.stringify(captureData, null, 2)], {
+      type: 'application/json'
+    });
+    
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `network_capture_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Capture saved successfully",
+      description: `Saved ${packets.length} packets to file`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Capture Controls */}
@@ -100,6 +139,16 @@ export const NetworkCapture: React.FC<NetworkCaptureProps> = ({
                   </>
                 )}
               </Button>
+              {packets.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  onClick={handleSaveCapture}
+                  className="min-w-[120px]"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Save Capture
+                </Button>
+              )}
               <div className="flex items-center space-x-2">
                 <div className={`status-indicator ${isCapturing ? 'status-online' : 'status-offline'}`} />
                 <span className="text-sm text-muted-foreground">

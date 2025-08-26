@@ -140,11 +140,6 @@ export const DatasetUpload: React.FC = () => {
             <p className="text-muted-foreground mb-4">
               Or click to browse and select files
             </p>
-            <Label htmlFor="file-upload">
-              <Button variant="outline" className="cursor-pointer">
-                Browse Files
-              </Button>
-            </Label>
             <Input
               id="file-upload"
               type="file"
@@ -153,6 +148,11 @@ export const DatasetUpload: React.FC = () => {
               className="hidden"
               onChange={(e) => handleFileUpload(e.target.files)}
             />
+            <Label htmlFor="file-upload">
+              <Button variant="outline" className="cursor-pointer">
+                Browse Files
+              </Button>
+            </Label>
             <p className="text-xs text-muted-foreground mt-4">
               Supported formats: PCAP, PCAPNG, CSV, CAP (Max 100MB per file)
             </p>
