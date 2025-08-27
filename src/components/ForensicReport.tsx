@@ -12,6 +12,7 @@ import {
   Network, Clock, TrendingUp 
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import jsPDF from 'jspdf';
 
 interface ForensicReportProps {
   captureData?: any[];
@@ -61,44 +62,112 @@ export const ForensicReport: React.FC<ForensicReportProps> = ({
   ];
 
   const generateReport = () => {
-    const reportData = {
-      timestamp: new Date().toISOString(),
-      summary: {
-        totalPackets: 3770,
-        threatsDetected: 50,
-        analysisTime: '2.3 minutes',
-        riskLevel: 'Medium'
-      },
-      findings: [
-        'Suspicious traffic patterns detected between 16:00-20:00',
-        'Multiple failed authentication attempts from 192.168.1.45',
-        'Unusual DNS queries suggesting potential data exfiltration',
-        'Encrypted traffic anomalies requiring further investigation'
-      ],
-      recommendations: [
-        'Implement additional monitoring for IP 192.168.1.45',
-        'Review DNS filtering policies',
-        'Enhance encryption protocol validation',
-        'Schedule regular traffic analysis during peak hours'
-      ]
-    };
-
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], {
-      type: 'application/json'
+    const pdf = new jsPDF();
+    const currentDate = new Date().toLocaleDateString();
+    
+    // Title
+    pdf.setFontSize(20);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Integrated Wireless Network Forensic Analysis Report', 20, 30);
+    
+    // Date
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`Generated: ${currentDate}`, 20, 45);
+    
+    // Summary Statistics
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Summary Statistics', 20, 65);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('• Total Packets Analyzed: 3,770', 20, 80);
+    pdf.text('• Threats Detected: 50', 20, 90);
+    pdf.text('• Critical Issues: 8', 20, 100);
+    pdf.text('• Analysis Completion: 92%', 20, 110);
+    pdf.text('• Risk Level: Medium', 20, 120);
+    
+    // Protocol Distribution
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Protocol Distribution', 20, 140);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    protocolData.forEach((protocol, index) => {
+      pdf.text(`• ${protocol.name}: ${protocol.value}%`, 20, 155 + (index * 10));
     });
     
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `forensic_report_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Threat Level Analysis
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Threat Level Analysis', 20, 210);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    threatLevelData.forEach((threat, index) => {
+      pdf.text(`• ${threat.level}: ${threat.count} incidents`, 20, 225 + (index * 10));
+    });
+    
+    // New page for findings
+    pdf.addPage();
+    
+    // Key Findings
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Key Findings', 20, 30);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    const findings = [
+      'CRITICAL: Multiple failed authentication attempts from 192.168.1.45 (15 attempts in 5 minutes)',
+      'MEDIUM: Suspicious DNS queries detected - potential data exfiltration patterns',
+      'INFO: Traffic spike during business hours - normal pattern but worth monitoring'
+    ];
+    
+    findings.forEach((finding, index) => {
+      const lines = pdf.splitTextToSize(finding, 170);
+      pdf.text(lines, 20, 50 + (index * 20));
+    });
+    
+    // Recommendations
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Recommendations', 20, 130);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    const recommendations = [
+      'Implement IP-based access controls for 192.168.1.45',
+      'Review and update DNS filtering policies',
+      'Enable real-time monitoring for authentication events',
+      'Schedule regular forensic analysis during peak hours',
+      'Implement additional encryption validation checks'
+    ];
+    
+    recommendations.forEach((rec, index) => {
+      pdf.text(`• ${rec}`, 20, 150 + (index * 10));
+    });
+    
+    // Executive Summary
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Executive Summary', 20, 220);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    const summary = 'The forensic analysis of network traffic captured over a 24-hour period reveals several security concerns that require immediate attention. A total of 3,770 packets were analyzed, with 50 potential threats identified across various severity levels. While no critical infrastructure compromise was detected, the presence of suspicious authentication attempts and anomalous DNS patterns suggests active reconnaissance or early-stage attack preparation.';
+    const summaryLines = pdf.splitTextToSize(summary, 170);
+    pdf.text(summaryLines, 20, 240);
+    
+    // Save PDF
+    const fileName = `forensic_report_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.pdf`;
+    pdf.save(fileName);
 
     toast({
-      title: "Report generated successfully",
-      description: "Forensic analysis report has been downloaded",
+      title: "PDF Report generated successfully",
+      description: "Forensic analysis report has been downloaded as PDF",
     });
   };
 
