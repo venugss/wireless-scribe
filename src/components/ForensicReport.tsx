@@ -187,7 +187,7 @@ export const ForensicReport: React.FC<ForensicReportProps> = ({
             </Button>
           </div>
           <CardDescription>
-            Comprehensive network forensic analysis results - {new Date().toLocaleDateString()}
+            Comprehensive integrated wireless network forensic analysis results - {new Date().toLocaleDateString()}
           </CardDescription>
         </CardHeader>
         <CardContent>

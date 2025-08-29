@@ -48,7 +48,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">
-                Network Forensics Framework
+                Integrated Wireless Network Forensic Analysis
               </h1>
               <p className="text-sm text-muted-foreground">
                 Advanced Wireless Analysis System

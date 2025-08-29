@@ -19,7 +19,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
                 </svg>
               </div>
               <h1 className="text-3xl font-bold text-foreground mb-2">
-                Network Forensics
+                Integrated Wireless Network Forensic Analysis
               </h1>
               <p className="text-muted-foreground text-lg">
                 Advanced Wireless Analysis Framework
